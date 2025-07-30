@@ -5,10 +5,47 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1 class="mt-5">Admin Dashboard</h1>
+    <div class="container mt-5">
+        <h1>Admin Dashboard</h1>
         <p>Welcome, <%= user.username %> (<%= user.role %>)</p>
-        <a href="/logout" class="btn btn-primary">Logout</a>
+
+        <div class="mb-3">
+            <a href="/logout" class="btn btn-secondary">Logout</a>
+            <a href="/movies/add" class="btn btn-success ml-2">+ Add New Movie</a>
+        </div>
+
+        <% if (movies && movies.length > 0) { %>
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Title</th>
+                        <th>Genre</th>
+                        <th>Year</th>
+                        <th>Rating</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% movies.forEach(movie => { %>
+                        <tr>
+                            <td><%= movie.title %></td>
+                            <td><%= movie.genre %></td>
+                            <td><%= movie.year %></td>
+                            <td><%= movie.rating %></td>
+                            <td>
+                                <a href="/movies/edit/<%= movie.id %>" class="btn btn-warning btn-sm">Edit</a>
+                                <form action="/movies/delete/<%= movie.id %>" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p>No movies found.</p>
+        <% } %>
     </div>
 </body>
 </html>
+
