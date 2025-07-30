@@ -1,78 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <title> Movie</title>
+    <title>Add Movie</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/">Movie Tracker
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="collapsibleNavbar">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="/inventory">Movie List</a>
-          </li> 
-          <li class="nav-item">
-            <a class="nav-link" href="/addMovie">Add New Movie</a>
-          </li> 
-          <li class="nav-item">
-            <a class="nav-link" href="/logout">Logout</a>
-          </li> 
-        </ul>
-      </div>
+    <div class="container mt-5">
+        <h2>Add New Movie</h2>
+        <form action="/movies/add" method="POST">
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" name="title" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Genre</label>
+                <input type="text" name="genre" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Year</label>
+                <input type="number" name="year" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Rating</label>
+                <input type="number" step="0.1" name="rating" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Image Filename</label>
+                <input type="text" name="image" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Review</label>
+                <textarea name="review" class="form-control" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-success">Add Movie</button>
+            <a href="/admin" class="btn btn-secondary">Cancel</a>
+        </form>
     </div>
-  </nav>
-
-  <!-- Main Content -->
-  <div class="container mt-4">
-    <h2 class="text-center mb-4">Add New Movie</h2>
-    <form action="/addMovie" method="POST" class="mx-auto" style="max-width: 500px;">
-
-      <div class="mb-3">
-        <label for="title" class="form-label">Movie Title</label>
-        <input type="text" class="form-control" id="title" name="title" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="genre" class="form-label">Genre</label>
-        <input type="text" class="form-control" id="genre" name="genre" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="year" class="form-label">Year</label>
-        <input type="number" class="form-control" id="year" name="year" min="1900" max="2100" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="rating" class="form-label">Rating (out of 10)</label>
-        <input type="number" class="form-control" id="rating" name="rating" min="0" max="10" step="0.1" required>
-      </div>
-
-      <div class="mb-4">
-        <label for="image" class="form-label">Movie Image (URL)</label>
-        <input class="form-control" type="text" id="image" name="image" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="review" class="form-label">Review</label>
-        <textarea class="form-control" id="review" name="review" rows="3" required></textarea>
-      </div>
-
-      <div class="d-grid">
-        <button type="submit" class="btn btn-primary">Add Movie</button>
-      </div>
-     
-      </div>
-    </form>
-  </div>
 </body>
 </html>

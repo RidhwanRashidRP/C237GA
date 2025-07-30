@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movie List</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>All Movies</h1>
+
+        <!-- Search + Filter Form -->
+        <form action="/movies" method="GET" class="form-inline mb-4">
+            <input type="text" name="search" class="form-control mr-2" placeholder="Search by title" value="<%= search || '' %>">
+
+            <select name="genre" class="form-control mr-2">
+                <option value="">All Genres</option>
+                <% genres.forEach(g => { %>
+                    <option value="<%= g %>" <%= genre === g ? 'selected' : '' %>><%= g %></option>
+                <% }) %>
+            </select>
+
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+
+        <!-- Movies Table -->
+        <% if (movies.length === 0) { %>
+            <p>No movies found.</p>
+        <% } else { %>
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Genre</th>
+                        <th>Year</th>
+                        <th>Rating</th>
+                        <th>Image</th>
+                        <th>Review</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% movies.forEach(movie => { %>
+                        <tr>
+                            <td><%= movie.id %></td>
+                            <td><%= movie.title %></td>
+                            <td><%= movie.genre %></td>
+                            <td><%= movie.year %></td>
+                            <td><%= movie.rating %></td>
+                            <td>
+                                <% if (movie.image) { %>
+                                    <img src="/images/<%= movie.image %>" alt="<%= movie.title %>" width="80">
+                                <% } else { %>
+                                    N/A
+                                <% } %>
+                            </td>
+                            <td><%= movie.review %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } %>
+
+        <a href="/dashboard" class="btn btn-secondary mt-3">Back to Dashboard</a>
+    </div>
+</body>
+</html>
