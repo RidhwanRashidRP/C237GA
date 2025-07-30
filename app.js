@@ -44,7 +44,6 @@ app.set('view engine', 'ejs');
 
 // ========== Auth Middlewares ==========
 const checkAuthenticated = (req, res, next) => {
-    console.log("Session user:", req.session.user);
     if (req.session.user) return next();
     req.flash('error', 'Please log in');
     res.redirect('/login');
@@ -58,13 +57,17 @@ const checkAdmin = (req, res, next) => {
 
 // ========== Routes ==========
 
+// Home
 app.get('/', (req, res) => {
     res.render('index', { user: req.session.user, messages: req.flash('success') });
 });
 
-// ----- Register -----
+// Register
 app.get('/register', (req, res) => {
-    res.render('register', { messages: req.flash('error'), formData: req.flash('formData')[0] });
+    res.render('register', {
+        messages: req.flash('error'),
+        formData: req.flash('formData')[0]
+    });
 });
 
 app.post('/register', (req, res) => {
@@ -81,7 +84,7 @@ app.post('/register', (req, res) => {
     });
 });
 
-// ----- Login -----
+// Login
 app.get('/login', (req, res) => {
     res.render('login', {
         messages: req.flash('success'),
@@ -91,7 +94,6 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
-
     if (!email || !password) {
         req.flash('error', 'All fields are required.');
         return res.redirect('/login');
@@ -112,12 +114,12 @@ app.post('/login', (req, res) => {
     });
 });
 
-// ----- Dashboard -----
+// Dashboard
 app.get('/dashboard', checkAuthenticated, (req, res) => {
     res.render('dashboard', { user: req.session.user });
 });
 
-// ----- Admin Panel -----
+// Admin panel
 app.get('/admin', checkAuthenticated, checkAdmin, (req, res) => {
     db.query('SELECT * FROM movies', (err, movies) => {
         if (err) throw err;
@@ -125,7 +127,7 @@ app.get('/admin', checkAuthenticated, checkAdmin, (req, res) => {
     });
 });
 
-// ----- Movies Listing -----
+// Movies Listing
 app.get('/movies', checkAuthenticated, (req, res) => {
     const search = req.query.search || '';
     const genre = req.query.genre || '';
@@ -147,7 +149,7 @@ app.get('/movies', checkAuthenticated, (req, res) => {
     });
 });
 
-// ----- Add Movie -----
+// Add Movie
 app.get('/movies/add', checkAuthenticated, checkAdmin, (req, res) => {
     res.render('addMovie', { user: req.session.user });
 });
@@ -163,7 +165,7 @@ app.post('/movies/add', checkAuthenticated, checkAdmin, upload.single('image'), 
     });
 });
 
-// ----- Edit Movie -----
+// Edit Movie
 app.get('/movies/edit/:id', checkAuthenticated, checkAdmin, (req, res) => {
     const movieId = req.params.id;
     db.query('SELECT * FROM movies WHERE id = ?', [movieId], (err, results) => {
@@ -176,9 +178,10 @@ app.get('/movies/edit/:id', checkAuthenticated, checkAdmin, (req, res) => {
     });
 });
 
-app.post('/movies/edit/:id', checkAuthenticated, checkAdmin, (req, res) => {
+app.post('/movies/edit/:id', checkAuthenticated, checkAdmin, upload.single('image'), (req, res) => {
     const movieId = req.params.id;
-    const { title, genre, year, rating, image, review } = req.body;
+    const { title, genre, year, rating, review, existingImage } = req.body;
+    const image = req.file ? req.file.filename : existingImage;
 
     const sql = 'UPDATE movies SET title = ?, genre = ?, year = ?, rating = ?, image = ?, review = ? WHERE id = ?';
     db.query(sql, [title, genre, year, rating, image, review, movieId], (err) => {
@@ -187,7 +190,7 @@ app.post('/movies/edit/:id', checkAuthenticated, checkAdmin, (req, res) => {
     });
 });
 
-// ----- Delete Movie -----
+// Delete Movie
 app.post('/movies/delete/:id', checkAuthenticated, checkAdmin, (req, res) => {
     const movieId = req.params.id;
     db.query('DELETE FROM movies WHERE id = ?', [movieId], (err) => {
@@ -196,7 +199,7 @@ app.post('/movies/delete/:id', checkAuthenticated, checkAdmin, (req, res) => {
     });
 });
 
-// ----- Upload View -----
+// Upload route (optional)
 app.get('/upload', (req, res) => {
     res.render('upload');
 });
@@ -208,13 +211,13 @@ app.post('/upload', upload.single('image'), (req, res) => {
     res.send(`File uploaded successfully: <a href="/uploads/${req.file.filename}">View Image</a>`);
 });
 
-// ----- Logout -----
+// Logout
 app.get('/logout', (req, res) => {
     req.session.destroy(() => {
         res.redirect('/login');
     });
 });
 
-// ========== Start Server ==========
+// Start Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
