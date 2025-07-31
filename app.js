@@ -18,13 +18,38 @@ const db = mysql.createConnection({
     host: 'c237-all.mysql.database.azure.com',
     user: 'c237admin',
     password: 'c2372025!',
-    database: 'c237_003_team2'
+    database: 'c237_003_team2',
+    connectTimeout: 20000, // Timeout in milliseconds
+    ssl: true, // Enable SSL for Azure MySQL
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-db.connect(err => {
-    if (err) throw err;
-    console.log('Connected to database');
-});
+// Handle connection errors and reconnection
+function handleDisconnect() {
+    db.connect(err => {
+        if (err) {
+            console.error('Error connecting to database:', err);
+            console.log('Attempting to reconnect in 5 seconds...');
+            setTimeout(handleDisconnect, 5000);
+        } else {
+            console.log('Connected to database');
+        }
+    });
+
+    db.on('error', (err) => {
+        console.error('Database error:', err);
+        if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ETIMEDOUT') {
+            console.log('Lost connection. Reconnecting...');
+            handleDisconnect();
+        } else {
+            throw err;
+        }
+    });
+}
+
+handleDisconnect();
 
 // ========== Middleware ==========
 app.use(express.urlencoded({ extended: true }));
